@@ -1,5 +1,8 @@
 <link rel="import" href="../polymer/polymer.html">
 
+<link rel="import" href="../oc-product-api/oc-product-api.html">
+<link rel="import" href="../oc-product-images-edit/oc-product-images-edit.html">
+
 <!--
 `oc-local-product-images-edit`
 Element to manage local product images on the Ordercloud platform
@@ -9,12 +12,9 @@ Element to manage local product images on the Ordercloud platform
 
 <dom-module id="oc-local-product-images-edit">
   <template>
-    <style>
-      :host {
-        display: block;
-      }
-    </style>
-    <h2>Hello [[prop1]]</h2>
+    <oc-product-api id="prodApi"></oc-product-api>
+
+    <oc-product-images-edit product-tags="[[productTags]]" menu-tags="[[menuTags]]" all-product-tags="[[allProductTags]]"></oc-product-images-edit>
   </template>
 
   <script>
@@ -23,10 +23,13 @@ Element to manage local product images on the Ordercloud platform
       is: 'oc-local-product-images-edit',
 
       properties: {
-        prop1: {
-          type: String,
-          value: 'oc-local-product-images-edit',
-        },
+        organisationId: Number,
+        productId : Number,
+        product: Object,
+        loading: {
+          type: Boolean,
+          notify: true
+        }
       },
 
     });

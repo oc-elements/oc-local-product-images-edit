@@ -1,20 +1,20 @@
 <link rel="import" href="../polymer/polymer.html">
 
 <link rel="import" href="../oc-product-api/oc-product-api.html">
-<link rel="import" href="../oc-product-images-edit/oc-product-images-edit.html">
+<link rel="import" href="../oc-product-image-edit/oc-product-image-edit.html">
 
 <!--
 `oc-local-product-images-edit`
 Element to manage local product images on the Ordercloud platform
 
-@demo demo/index.html 
+@demo demo/index.html
 -->
 
 <dom-module id="oc-local-product-images-edit">
   <template>
     <oc-product-api id="prodApi"></oc-product-api>
 
-    <oc-product-images-edit product-tags="[[productTags]]" menu-tags="[[menuTags]]" all-product-tags="[[allProductTags]]"></oc-product-images-edit>
+    <oc-product-image-edit images="[[_images]]" ></oc-product-image-edit>
   </template>
 
   <script>
@@ -31,6 +31,52 @@ Element to manage local product images on the Ordercloud platform
           notify: true
         }
       },
+
+      listeners: {
+        'delete' : '_deleteImage',
+        'default' : '_setDefaultImage',
+      },
+
+      refresh: function(){
+        this._getProductImages()
+      },
+
+      _getProductImages: function(productId) {
+        var productId = productId || this.productId;
+
+        this.$.prodApi.getProductImages(productId)
+                .then(function(request){
+                  console.log(request.response);
+                  this._images = request.response.results;
+                }.bind(this))
+                .catch(this.fire.bind(this, 'options_error', 'Could not load product images'))
+                .finally(this.set.bind(this, 'loading', false));
+      },
+
+      _getImageName : function(imageUrl){
+        return imageUrl.split('/').splice(-1,1)[0];
+      },
+
+      _deleteImage : function(e){
+        this.loading = true;
+
+        this.$.prodApi.deleteProductImage(this.productId, this._getImageName(e.detail.name))
+                .then(function(request){
+                  this._getProductImages()
+                }.bind(this))
+                .catch(this.fire.bind(this, 'options_error', 'Could not delete image'))
+                .finally(this.set.bind(this, 'loading', false));
+      },
+
+      _setDefaultImage : function(e){
+        this.loading = true;
+        this.$.prodApi.setDefaultImage(this.productId, this._getImageName(e.detail.name))
+                .then(function(request){
+                  this._getProductImages()
+                }.bind(this))
+                .catch(this.fire.bind(this, 'options_error', 'Could not set default image'))
+                .finally(this.set.bind(this, 'loading', false));
+      }
 
     });
   </script>

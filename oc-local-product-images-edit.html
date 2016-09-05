@@ -90,13 +90,6 @@ Element to manage local product images on the Ordercloud platform
 
       _uploadResult : function(e){
         this.loading = !this.loading;
-
-        if(e.type === "error") {
-          this.$.toast.show("error uploading image".toUpperCase())
-        } else {
-          this._getProductImages();
-        }
-
       },
 
       _uploadValidationError : function(e) {
@@ -109,9 +102,9 @@ Element to manage local product images on the Ordercloud platform
 
       _computeHeaders : function(organisationId){
         var headerObj = {};
+
         headerObj.Authorization = 'Bearer ' + OC.token;
         headerObj['X-Ordercloud-Organisation'] = OC.clientId;
-
         return headerObj;
       },
 

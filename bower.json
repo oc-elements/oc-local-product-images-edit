@@ -5,7 +5,8 @@
   "dependencies": {
     "polymer": "Polymer/polymer#^1.4.0",
     "oc-product-api": "git://github.com/oc-elements/oc-product-api#1.x",
-    "oc-product-image-edit": "git://github.com/oc-elements/oc-product-image-edit#1.x"
+    "oc-product-image-edit": "git://github.com/oc-elements/oc-product-image-edit#1.x",
+    "paper-toast": "PolymerElements/paper-toast#^1.3.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

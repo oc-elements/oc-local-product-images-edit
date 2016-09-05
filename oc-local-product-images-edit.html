@@ -2,6 +2,7 @@
 
 <link rel="import" href="../oc-product-api/oc-product-api.html">
 <link rel="import" href="../oc-product-image-edit/oc-product-image-edit.html">
+<link rel="import" href="../paper-toast/paper-toast.html">
 
 <!--
 `oc-local-product-images-edit`
@@ -14,7 +15,9 @@ Element to manage local product images on the Ordercloud platform
   <template>
     <oc-product-api id="prodApi"></oc-product-api>
 
-    <oc-product-image-edit images="[[_images]]" ></oc-product-image-edit>
+    <paper-toast id="toast"></paper-toast>
+
+    <oc-product-image-edit images="[[_images]]" target="[[_computeUrl(productId)]]" headers="[[_computeHeaders(organisationId)]]"></oc-product-image-edit>
   </template>
 
   <script>
@@ -35,6 +38,10 @@ Element to manage local product images on the Ordercloud platform
       listeners: {
         'delete' : '_deleteImage',
         'default' : '_setDefaultImage',
+        'before-upload' : "_beforeUpload",
+        'error' : "_uploadResult",
+        'success' : "_uploadResult",
+        'validation-error' : "_uploadValidationError",
       },
 
       refresh: function(){
@@ -46,7 +53,6 @@ Element to manage local product images on the Ordercloud platform
 
         this.$.prodApi.getProductImages(productId)
                 .then(function(request){
-                  console.log(request.response);
                   this._images = request.response.results;
                 }.bind(this))
                 .catch(this.fire.bind(this, 'options_error', 'Could not load product images'))
@@ -76,7 +82,41 @@ Element to manage local product images on the Ordercloud platform
                 }.bind(this))
                 .catch(this.fire.bind(this, 'options_error', 'Could not set default image'))
                 .finally(this.set.bind(this, 'loading', false));
-      }
+      },
+
+      _beforeUpload : function(e){
+        this.loading = !this.loading;
+      },
+
+      _uploadResult : function(e){
+        this.loading = !this.loading;
+
+        if(e.type === "error") {
+          this.$.toast.show("error uploading image".toUpperCase())
+        } else {
+          this._getProductImages();
+        }
+
+      },
+
+      _uploadValidationError : function(e) {
+        this.$.toast.show(e.detail.toUpperCase())
+      },
+
+      _computeUrl : function(productId){
+        return OC.apiHost + 'resource/product/'+productId+'/image'
+      },
+
+      _computeHeaders : function(organisationId){
+        var headerObj = {};
+        headerObj.Authorization = 'Bearer ' + OC.token;
+        headerObj['X-Ordercloud-Organisation'] = OC.clientId;
+
+        return headerObj;
+      },
+
+
+
 
     });
   </script>

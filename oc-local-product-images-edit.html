@@ -27,7 +27,10 @@ Element to manage local product images on the Ordercloud platform
 
       properties: {
         organisationId: Number,
-        productId : Number,
+        productId : {
+          type: Number,
+          computed: "_computeProductId(product)"
+        },
         product: Object,
         loading: {
           type: Boolean,
@@ -46,6 +49,10 @@ Element to manage local product images on the Ordercloud platform
 
       refresh: function(){
         this._getProductImages()
+      },
+
+      _computeProductId : function(product){
+        return product.id;
       },
 
       _getProductImages: function(productId) {

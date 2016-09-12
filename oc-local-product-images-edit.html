@@ -109,6 +109,7 @@ Element to manage local product images on the Ordercloud platform
 
       _uploadResult : function(e){
         this.loading = !this.loading;
+        this._getProductImages()
       },
 
       _uploadValidationError : function(e) {
